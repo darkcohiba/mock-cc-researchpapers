@@ -32,17 +32,11 @@ def research_by_id(id):
     if request.method == "GET":
 
         research_list = Research.query.filter_by(id = id).first()
-        print("insde")
-
         if not research_list:
             return {"error": "Research paper not found"}
-        # proxy is no help
-        # authors = db.session.query(Author).join(ResearchAuthors).join(Research).filter(Research.id == id).all()
-        # l = research_list.to_dict()
-        # l["authors"] = [author.to_dict(only=('name','id','field_of_study')) for author in authors]
 
-        # using proxy method!
-        l = research_list.to_dict(rules=('author_array',))
+        # using proxy and a custom method!
+        l = research_list.to_dict(only=('id', 'topic', 'year', 'page_count', 'authors.id', 'authors.name', 'authors.field_of_study'))
 
         return make_response(jsonify(l), 200)
 

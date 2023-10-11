@@ -20,21 +20,8 @@ class Research(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     research_author_relationship_field = db.relationship("ResearchAuthors", back_populates="research_relationship_field", cascade = 'all, delete')
 
-    authors = association_proxy('research_author_relationship_field', 'author_relationship_field')
-    def author_array(self):
-        re = db.session.query(Research).filter_by(id=self.id).first()
-        author_array = []
-        for author in re.authors:
-            for box in author.author_research_relationship_field:
-                if box.research_id == self.id:
-                    author_block = {
-                        "id": author.id,
-                        "name": author.name,
-                        "field_of_study": author.field_of_study
-                    }
-                    print(author_block)
-                    author_array.append(author_block)
-        return author_array
+    authors = association_proxy('research_author_relationship_field', 'author_relationship_field', creator=lambda author_obj: ResearchAuthors(author_relationship_field = author_obj))
+    
     @validates('year')
     def validate_year(self, key, year):
         if len(str(year)) != 4:
