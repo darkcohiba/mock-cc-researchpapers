@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
-from random import choice as rc
+from random import randint, choice as rc
 from faker import Faker
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app import app
 from models import db, Research, Author, ResearchAuthors
+
+def create_ra():
+    ra_list = []
+    for _ in range(50):
+        r = ResearchAuthors(author_id = randint(1, 3), research_id = randint(1, 3))
+        ra_list.append(r)
+    return ra_list
 
 with app.app_context():
 
@@ -33,13 +40,15 @@ with app.app_context():
     db.session.commit()
     print("Creating ResearchAuthors...")
 
-    ra1 = ResearchAuthors(author_id = a1.id, research_id = r1.id)
-    ra2 = ResearchAuthors(author_id = a2.id, research_id  = r2.id)
-    ra3 = ResearchAuthors(author_id = a3.id, research_id = r3.id)
-    ra4 = ResearchAuthors(author_id = a1.id, research_id = r3.id)
-    researchAuthor = [ra1, ra2, ra3, ra4]
+    # ra1 = ResearchAuthors(author_id = a1.id, research_id = r1.id)
+    # ra2 = ResearchAuthors(author_id = a2.id, research_id  = r2.id)
+    # ra3 = ResearchAuthors(author_id = a3.id, research_id = r3.id)
+    # ra4 = ResearchAuthors(author_id = a1.id, research_id = r3.id)
+    # researchAuthor = [ra1, ra2, ra3, ra4]
+
+    researchers = create_ra()
     
-    db.session.add_all(researchAuthor)
+    db.session.add_all(researchers)
     db.session.commit()
 
     print("Seeding done!")
