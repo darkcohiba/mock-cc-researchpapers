@@ -6,16 +6,18 @@ from models import db, Research, Author, ResearchAuthors
 
 
 def create_authors():
-    re = db.session.query(Research).filter_by(id=3).first()
-    author_array =[]
-    for author in re.research_author_relationship_field:
-            author_block = {
-                "id": author.author_relationship_field.id,
-                "name": author.author_relationship_field.name,
-                "field_of_study": author.author_relationship_field.field_of_study
-            }
-            print(author_block)
-            author_array.append(author_block)
+    id = 3
+    re = db.session.query(Research).filter_by(id=id).first()
+    author_array = []
+    for author in re.authors:
+        for box in author.author_research_relationship_field:
+            if box.research_id == id:
+                author_block = {
+                    "id": author.id,
+                    "name": author.name,
+                    "field_of_study": author.field_of_study
+                }
+                author_array.append(author_block)
     return author_array
 
 

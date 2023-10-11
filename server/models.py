@@ -20,28 +20,28 @@ class Research(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     research_author_relationship_field = db.relationship("ResearchAuthors", back_populates="research_relationship_field", cascade = 'all, delete')
 
+    authors = association_proxy('research_author_relationship_field', 'author_relationship_field')
+    def author_array(self):
+        re = db.session.query(Research).filter_by(id=self.id).first()
+        author_array = []
+        for author in re.authors:
+            for box in author.author_research_relationship_field:
+                if box.research_id == self.id:
+                    author_block = {
+                        "id": author.id,
+                        "name": author.name,
+                        "field_of_study": author.field_of_study
+                    }
+                    print(author_block)
+                    author_array.append(author_block)
+        return author_array
     @validates('year')
     def validate_year(self, key, year):
         if len(str(year)) != 4:
             raise ValueError("Year must be four digits")
         return year
     serialize_rules=('-research_author_relationship_field','-created_at','-updated_at')
-    # serialize_only=('id','topic','year','page_count','field_of_study','name',)
-    # serialize_only=('id','topic','year','page_count')
 
-
-    def authors(self):
-        re = db.session.query(Research).filter_by(id=self.id).first()
-        author_array =[]
-        for author in re.research_author_relationship_field:
-                author_block = {
-                    "id": author.author_relationship_field.id,
-                    "name": author.author_relationship_field.name,
-                    "field_of_study": author.author_relationship_field.field_of_study
-                }
-                print(author_block)
-                author_array.append(author_block)
-        return author_array
     
     
 
@@ -54,6 +54,7 @@ class Author(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     author_research_relationship_field = db.relationship("ResearchAuthors", back_populates="author_relationship_field", cascade = 'all, delete')
 
+    
     @validates("field_of_study")
     def validate_field(self, key, field_of_study):
         fields = ["AI", "Robotics", "Machine Learning", "Vision", "Cybersecurity"]
