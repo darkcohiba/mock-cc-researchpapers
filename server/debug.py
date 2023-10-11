@@ -9,14 +9,15 @@ def create_authors():
     re = db.session.query(Research).filter_by(id=3).first()
     author_array =[]
     for author in re.research_author_relationship_field:
-            author_block = {
-                "id": author.author_relationship_field.id,
-                "name": author.author_relationship_field.name,
-                "field_of_study": author.author_relationship_field.field_of_study
-            }
-            print(author_block)
-            author_array.append(author_block)
-    return author_array
+            # author_block = {
+            #     "id": author.author_relationship_field.id,
+            #     "name": author.author_relationship_field.name,
+            #     "field_of_study": author.author_relationship_field.field_of_study
+            # }
+            print(author.author_relationship_field.to_dict(only=('id', 'name','field_of_study')))
+
+    #         author_array.append(author.author_relationship_field.to_dict())
+    # return author_array
 
 
 if __name__ == '__main__':
